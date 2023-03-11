@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias   = "ap-northeast-1"
-  region  = "ap-northeast-1"
+  alias  = "us-east-1"
+  region = "us-east-1"
   profile = "kenji-test"
 }

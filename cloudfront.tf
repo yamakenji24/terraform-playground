@@ -1,13 +1,18 @@
 
 resource "aws_cloudfront_distribution" "example_cloudfront" {
-  provider = aws.ap-northeast-1
+  provider = aws.us-east-1
+
+  aliases = [
+    data.aws_acm_certificate.test_yamakenji_dev.domain,
+  ]
 
   enabled         = true
   is_ipv6_enabled = true
   price_class     = "PriceClass_100"
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    cloudfront_default_certificate = false
+    acm_certificate_arn            = data.aws_acm_certificate.test_yamakenji_dev.arn
     minimum_protocol_version       = "TLSv1.2_2021"
     ssl_support_method             = "sni-only"
   }

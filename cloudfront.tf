@@ -8,7 +8,7 @@ resource "aws_cloudfront_distribution" "example_cloudfront" {
 
   enabled         = true
   is_ipv6_enabled = true
-  price_class     = "PriceClass_100"
+  price_class     = "PriceClass_200"
 
   viewer_certificate {
     cloudfront_default_certificate = false
@@ -23,24 +23,78 @@ resource "aws_cloudfront_distribution" "example_cloudfront" {
     }
   }
 
+  // s3
   origin {
     origin_id                = aws_s3_bucket.example_s3.id
     domain_name              = aws_s3_bucket.example_s3.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.access_s3.id
   }
 
+  // api-gateway
+  origin {
+    origin_id   = aws_api_gateway_rest_api.example_next_api.id
+    domain_name = "${aws_api_gateway_rest_api.example_next_api.id}.execute-api.ap-northeast-1.amazonaws.com"
+    origin_path = "/${aws_api_gateway_stage.example_next_api.stage_name}"
+
+    custom_origin_config {
+      http_port  = 80
+      https_port = 443
+
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols = [
+        "TLSv1",
+        "TLSv1.1",
+        "TLSv1.2"
+      ]
+    }
+  }
+
   default_cache_behavior {
-    target_origin_id       = aws_s3_bucket.example_s3.id
+    target_origin_id       = aws_api_gateway_rest_api.example_next_api.id
     viewer_protocol_policy = "allow-all"
-    cached_methods         = ["GET", "HEAD"]
-    allowed_methods        = ["GET", "HEAD"]
+
+    compress = false
+
+    allowed_methods = [
+      "GET",
+      "HEAD",
+      "OPTIONS",
+      "PUT",
+      "POST",
+      "PATCH",
+      "DELETE"
+    ]
+    cached_methods = ["GET", "HEAD"]
+  }
+
+  ordered_cache_behavior {
+    target_origin_id       = aws_api_gateway_rest_api.example_next_api.id
+    viewer_protocol_policy = "allow-all"
+    path_pattern           = "/_next/data/*"
+    compress               = false
+    min_ttl                = 0
+
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods  = ["GET", "HEAD"]
+
     forwarded_values {
-      query_string = false
       headers      = []
+      query_string = false
       cookies {
-        forward = "none"
+        forward = "all"
       }
     }
+  }
+
+  ordered_cache_behavior {
+    target_origin_id       = aws_s3_bucket.example_s3.id
+    viewer_protocol_policy = "allow-all"
+    path_pattern           = "/_next/*"
+
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods  = ["GET", "HEAD"]
+
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
   }
 }
 

@@ -65,6 +65,14 @@ resource "aws_cloudfront_distribution" "example_cloudfront" {
       "DELETE"
     ]
     cached_methods = ["GET", "HEAD"]
+
+    forwarded_values {
+      headers      = []
+      query_string = false
+      cookies {
+        forward = "all"
+      }
+    }
   }
 
   ordered_cache_behavior {
@@ -73,6 +81,8 @@ resource "aws_cloudfront_distribution" "example_cloudfront" {
     path_pattern           = "/_next/data/*"
     compress               = false
     min_ttl                = 0
+    default_ttl            = 0
+    max_ttl                = 0
 
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
@@ -94,7 +104,13 @@ resource "aws_cloudfront_distribution" "example_cloudfront" {
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
 
-    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
+    forwarded_values {
+      headers      = []
+      query_string = false
+      cookies {
+        forward = "all"
+      }
+    }
   }
 }
 

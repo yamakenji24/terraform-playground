@@ -11,6 +11,10 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
     defaults:
       run:
         working-directory: ./frontend

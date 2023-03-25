@@ -1,6 +1,5 @@
 resource "aws_ecr_repository" "example_next_repo" {
   name                 = "example_next_repo"
-  image_tag_mutability = "IMMUTABLE"
 }
 
 resource "aws_lambda_function" "example_next_repo_function" {

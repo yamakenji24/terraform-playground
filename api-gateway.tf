@@ -20,12 +20,16 @@ resource "aws_api_gateway_method" "aws_api_gateway_resource_paths" {
   authorization = "NONE"
 }
 
+# resource "aws_api_gateway_method_settings" "example_next_api_logs" {
+#   rest_api_id = aws_api_gateway_rest_api.example_next_api.id
+#   stage_name  = aws_api_gateway_stage.example_next_api.stage_name
+#   method_path = "*/*"
 
-resource "aws_api_gateway_resource" "example_resource_paths" {
-  rest_api_id = aws_api_gateway_rest_api.example_next_api.id
-  parent_id   = aws_api_gateway_rest_api.example_next_api.root_resource_id
-  path_part   = "{proxy+}"
-}
+#   settings {
+#     metrics_enabled = true
+#     logging_level   = "INFO"
+#   }
+# }
 
 resource "aws_api_gateway_integration" "example_next_api_root" {
   rest_api_id = aws_api_gateway_rest_api.example_next_api.id
@@ -47,6 +51,11 @@ resource "aws_api_gateway_integration" "example_next_api_paths" {
   integration_http_method = "POST"
 }
 
+resource "aws_api_gateway_resource" "example_resource_paths" {
+  rest_api_id = aws_api_gateway_rest_api.example_next_api.id
+  parent_id   = aws_api_gateway_rest_api.example_next_api.root_resource_id
+  path_part   = "{proxy+}"
+}
 
 resource "aws_api_gateway_deployment" "example_next_api" {
   rest_api_id = aws_api_gateway_rest_api.example_next_api.id

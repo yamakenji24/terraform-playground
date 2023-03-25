@@ -23,13 +23,6 @@ resource "aws_cloudfront_distribution" "example_cloudfront" {
     }
   }
 
-  // s3
-  origin {
-    origin_id                = aws_s3_bucket.example_s3.id
-    domain_name              = aws_s3_bucket.example_s3.bucket_regional_domain_name
-    origin_access_control_id = aws_cloudfront_origin_access_control.access_s3.id
-  }
-
   // api-gateway
   origin {
     origin_id   = aws_api_gateway_rest_api.example_next_api.id
@@ -47,6 +40,13 @@ resource "aws_cloudfront_distribution" "example_cloudfront" {
         "TLSv1.2"
       ]
     }
+  }
+
+  // s3
+  origin {
+    origin_id                = aws_s3_bucket.example_s3.id
+    domain_name              = aws_s3_bucket.example_s3.bucket_regional_domain_name
+    origin_access_control_id = aws_cloudfront_origin_access_control.access_s3.id
   }
 
   default_cache_behavior {

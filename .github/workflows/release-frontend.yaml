@@ -34,6 +34,11 @@ jobs:
       - name: set IMAGE_URL
         id: image-url
         run: echo "IMAGE_URL=${{ steps.login-ecr.outputs.registry }}/example_next_repo:${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: npm ci
+        run: npm ci
+      - name: Build
+        run: npm run build
       - name: Build, tag, and push docker image to Amazon ECR
         run: |
           docker build -t ${{ env.IMAGE_URL }} --build-arg build_id=${{ github.sha }} .

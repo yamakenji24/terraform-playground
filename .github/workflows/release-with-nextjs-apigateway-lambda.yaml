@@ -5,11 +5,11 @@ on:
     branches:
       - 'main'
     paths:
-      - "frontend/**"
+      - "with-nextjs-apigateway-lambda/frontend/**"
   workflow_dispatch:
 
 jobs:
-  release:
+  release-with-nextjs-apigateway-lambda:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -17,7 +17,7 @@ jobs:
       packages: write
     defaults:
       run:
-        working-directory: ./frontend
+        working-directory: ./with-nextjs-apigateway-lambda/frontend
     steps:
       - uses: actions/checkout@v3
       - name: Configure AWS credentials

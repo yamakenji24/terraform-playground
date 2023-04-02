@@ -57,6 +57,32 @@ data "aws_iam_policy_document" "example_write_cloudwatch_log_document" {
   }
 }
 
+data "aws_iam_policy_document" "deploy_to_lambda_document" {
+  statement {
+    actions = [
+      "lambda:Update*"
+    ]
+    effect = "Allow"
+    resources = [
+      aws_lambda_function.example_next_repo_function.arn
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "deploy_to_s3_document" {
+  statement {
+    actions = [
+      "s3:DeleteObject*",
+      "s3:PutObject"
+    ]
+    effect = "Allow"
+    resources = [
+      aws_s3_bucket.example_s3.arn,
+      "${aws_s3_bucket.example_s3.arn}/*"
+    ]
+  }
+}
+
 data "aws_iam_policy_document" "deploy_to_ecr_document" {
   statement {
     actions = [
@@ -88,6 +114,22 @@ resource "aws_iam_role" "deploy_role" {
   assume_role_policy = data.aws_iam_policy_document.deploy_assume_role_policy.json
 }
 
+resource "aws_iam_policy" "deploy_to_lambda_policy" {
+  name        = "deploy_to_lambda_policy"
+  path        = "/"
+  description = "policy for deploy_to_lambda"
+
+  policy = data.aws_iam_policy_document.deploy_to_lambda_document.json
+}
+
+resource "aws_iam_policy" "deploy_to_s3_policy" {
+  name        = "deploy_to_s3_policy"
+  path        = "/"
+  description = "policy for deploy_to_s3"
+
+  policy = data.aws_iam_policy_document.deploy_to_s3_document.json
+}
+
 resource "aws_iam_policy" "deploy_to_ecr_policy" {
   name        = "deploy_to_ecr_policy"
   path        = "/"
@@ -100,6 +142,16 @@ resource "aws_iam_policy" "deploy_to_ecr_policy" {
 resource "aws_iam_role_policy_attachment" "attach-write-cloudwatch-logs" {
   role       = aws_iam_role.example_lambda_iam.name
   policy_arn = aws_iam_policy.example_write_cloudwatch_log.arn
+}
+
+resource "aws_iam_role_policy_attachment" "upload_lambda" {
+  role       = aws_iam_role.deploy_role.name
+  policy_arn = aws_iam_policy.deploy_to_lambda_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "upload_s3" {
+  role       = aws_iam_role.deploy_role.name
+  policy_arn = aws_iam_policy.deploy_to_s3_policy.arn
 }
 
 resource "aws_iam_role_policy_attachment" "upload_ecr" {

@@ -50,4 +50,4 @@ jobs:
         run: aws s3 cp --recursive --region ap-northeast-1 ./.next/static s3://frontend-s3-bucket-testest/_next/static
 
       - name: deploy public to s3
-        run: aws s3 cp --exclude "./public/aaaa.js" --recursive --region ap-northeast-1 ./public s3://${{ inputs.s3_bucket_name }}/_next/public
+        run: aws s3 cp --exclude "./public/aaaa.js" --recursive --region ap-northeast-1 ./public s3://frontend-s3-bucket-testest/_next/public

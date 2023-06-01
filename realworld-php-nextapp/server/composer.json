@@ -1,0 +1,19 @@
+{
+    "name": "cw-kenji.yamashita/server",
+    "autoload": {
+        "psr-4": {
+            "CwKenjiYamashita\\Server\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "yamakenji24",
+            "email": "yamakenji24@gmail.com"
+        }
+    ],
+    "require": {
+        "league/route": "^5.1",
+        "laminas/laminas-diactoros": "^3.0",
+        "laminas/laminas-httphandlerrunner": "^2.6"
+    }
+}

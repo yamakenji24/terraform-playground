@@ -1,22 +1,32 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
-require 'vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
-use Psr\Http\Message\ResponseInterface;
+use League\Route\RouteGroup;
 use Psr\Http\Message\ServerRequestInterface;
 
 $request = Laminas\Diactoros\ServerRequestFactory::fromGlobals(
-    $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
+  $_SERVER,
+  $_GET,
+  $_POST,
+  $_COOKIE,
+  $_FILES
 );
 
-$router = new League\Route\Router;
+$responseFactory = new Laminas\Diactoros\ResponseFactory();
 
-// map a route
-$router->map('GET', '/', function (ServerRequestInterface $request): ResponseInterface {
-    $response = new Laminas\Diactoros\Response;
-    $response->getBody()->write('<h1>Hello, World!</h1>');
-    return $response;
+$strategy = new League\Route\Strategy\JsonStrategy($responseFactory);
+$router = (new League\Route\Router);
+$router->setStrategy($strategy);
+
+$router->group('/api', function ($route) {
+  $route->get('/health-check', function (ServerRequestInterface $request): array {
+    return [
+      'title' => 'My New Simple API',
+      'version' => 1,
+    ];
+  });
 });
 
 $response = $router->dispatch($request);

@@ -39,7 +39,7 @@ data "aws_iam_policy_document" "deploy_assume_role_policy" {
     }
     condition {
       test     = "StringEquals"
-      variable = "token.actions.githubusercontent.com:aud"
+      variable = "token.actions.githubusercontent.com:sub"
       values   = ["sts.amazonaws.com"]
     }
   }
